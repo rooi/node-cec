@@ -12,7 +12,6 @@
     "lint": "coffeelint src/",
     "pretest": "npm run lint",
     "test": "echo 'no tests'",
-    "prebuild": "npm run test",
     "build": "coffee -o lib/ -c src/",
     "watch": "coffee -o lib/ -cw src/",
     "prepublish": "npm run build",
