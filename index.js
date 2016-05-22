@@ -1,3 +1,3 @@
 'use strict';
 
-module.exports = require( './node-cec' )
+module.exports = require( './lib/node-cec' )
