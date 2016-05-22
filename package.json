@@ -14,8 +14,7 @@
     "test": "echo 'no tests'",
     "build": "coffee -o lib/ -c src/",
     "watch": "coffee -o lib/ -cw src/",
-    "prepublish": "npm run build",
-    "install": "npm run build"
+    "prepublish": "npm run build"
   },
   "devDependencies": {
     "coffee-script": "1.10.0",
