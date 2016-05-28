@@ -26,6 +26,11 @@ class @NodeCec extends EventEmitter
         callback: @processTraffic
       }
 
+      {
+        match: /^DEBUG:/g
+        callback: @processDebug
+      }
+
     ]
 
   start: ( @clientName = 'cec-client', @params... ) ->
@@ -81,7 +86,13 @@ class @NodeCec extends EventEmitter
 
 
 
+  # -------------------------------------------------------------------------- #
+  #    #DEBUG
+  # -------------------------------------------------------------------------- #
 
+  processDebug: ( msg ) =>
+
+    @emit( 'debug', msg )
 
   # -------------------------------------------------------------------------- #
   #    #TRAFFIC
@@ -89,6 +100,8 @@ class @NodeCec extends EventEmitter
 
   processTraffic: ( traffic ) =>
     packet = {}
+
+    @emit( 'traffic', traffic )
 
     command = traffic.substr( traffic.indexOf(']\t') + 2 ) # "<< 0f:..:.."
     command = command.substr( command.indexOf( ' ' ) + 1 ) # "0f:..:.."
@@ -153,7 +166,84 @@ class @NodeCec extends EventEmitter
         @emit( 'REPORT_PHYSICAL_ADDRESS', packet, source, packet.args[2] )
         return true
 
+      when CEC.Opcode.DECK_STATUS
+        break unless packet.args.length >= 1
+        status = packet.args[0] << 8 | packet.args[1]
+        @emit( 'DECK_STATUS', packet, status )
+        return true
 
+      when CEC.Opcode.REPORT_POWER_STATUS
+        break unless packet.args.length >= 1
+        status = packet.args[0]
+        @emit( 'REPORT_POWER_STATUS', packet, status )
+        return true
+
+      when CEC.Opcode.DEVICE_VENDOR_ID
+        break unless packet.args.length >= 3
+        id = packet.args[0] << 16 | packet.args[1] << 8 | packet.args[2]
+        vendor = 'UNKNOWN'
+        if id is CEC.VendorId.TOSHIBA
+          vendor = 'TOSHIBA'
+        else if id is CEC.VendorId.SAMSUNG
+          vendor = 'SAMSUNG'
+        else if id is CEC.VendorId.DENON
+          vendor = 'DENON'
+        else if id is CEC.VendorId.MARANTZ
+          vendor = 'MARANTZ'
+        else if id is CEC.VendorId.SAMSUNG
+          vendor = 'SAMSUNG'
+        else if id is CEC.VendorId.LOEWE
+          vendor = 'LOEWE'
+        else if id is CEC.VendorId.ONKYO
+          vendor = 'ONKYO'
+        else if id is CEC.VendorId.MEDION
+          vendor = 'MEDION'
+        else if id is CEC.VendorId.TOSHIBA2
+          vendor = 'TOSHIBA2'
+        else if id is CEC.VendorId.PULSE_EIGHT
+          vendor = 'PULSE_EIGHT'
+        else if id is CEC.VendorId.HARMAN_KARDON2
+          vendor = 'HARMAN_KARDON2'
+        else if id is CEC.VendorId.GOOGLE
+          vendor = 'GOOGLE'
+        else if id is CEC.VendorId.AKAI
+          vendor = 'AKAI'
+        else if id is CEC.VendorId.AOC
+          vendor = 'AOC'
+        else if id is CEC.VendorId.PANASONIC
+          vendor = 'PANASONIC'
+        else if id is CEC.VendorId.PHILIPS
+          vendor = 'PHILIPS'
+        else if id is CEC.VendorId.DAEWOO
+          vendor = 'DAEWOO'
+        else if id is CEC.VendorId.YAMAHA
+          vendor = 'YAMAHA'
+        else if id is CEC.VendorId.GRUNDIG
+          vendor = 'GRUNDIG'
+        else if id is CEC.VendorId.PIONEER
+          vendor = 'PIONEER'
+        else if id is CEC.VendorId.LG
+          vendor = 'LG'
+        else if id is CEC.VendorId.SHARP
+          vendor = 'SHARP'
+        else if id is CEC.VendorId.SONY
+          vendor = 'SONY'
+        else if id is CEC.VendorId.BROADCOM
+          vendor = 'BROADCOM'
+        else if id is CEC.VendorId.VIZIO
+          vendor = 'VIZIO'
+        else if id is CEC.VendorId.BENQ
+          vendor = 'BENQ'
+        else if id is CEC.VendorId.HARMAN_KARDON
+          vendor = 'HARMAN_KARDON'
+        @emit( 'DEVICE_VENDOR_ID', packet, id, vendor )
+        return true
+
+      when CEC.Opcode.CEC_VERSION
+        break unless packet.args.length >= 1
+        version = packet.args[0] << 8 | packet.args[1]
+        @emit( 'CEC_VERSION', packet, version )
+        return true
 
       # ---------------------------------------------------------------------- #
       #    #OTHER
