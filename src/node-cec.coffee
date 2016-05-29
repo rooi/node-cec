@@ -178,6 +178,11 @@ class @NodeCec extends EventEmitter
         @emit( 'REPORT_POWER_STATUS', packet, status )
         return true
 
+      when CEC.Opcode.STANDBY
+        break unless packet.args.length >= 1
+        @emit( 'STANDBY' )
+        return true
+
       when CEC.Opcode.DEVICE_VENDOR_ID
         break unless packet.args.length >= 3
         id = packet.args[0] << 16 | packet.args[1] << 8 | packet.args[2]
