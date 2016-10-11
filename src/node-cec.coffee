@@ -183,6 +183,16 @@ class @NodeCec extends EventEmitter
         @emit( 'STANDBY' )
         return true
 
+      when CEC.UserControlCode.VOLUME_UP
+        break unless packet.args.length >= 0
+        @emit( 'VOLUME_UP' )
+        return true
+
+      when CEC.UserControlCode.VOLUME_DOWN
+        break unless packet.args.length >= 0
+        @emit( 'VOLUME_DOWN' )
+        return true
+
       when CEC.Opcode.DEVICE_VENDOR_ID
         break unless packet.args.length >= 3
         id = packet.args[0] << 16 | packet.args[1] << 8 | packet.args[2]
