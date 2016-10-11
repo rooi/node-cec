@@ -179,7 +179,7 @@ class @NodeCec extends EventEmitter
         return true
 
       when CEC.Opcode.STANDBY
-        break unless packet.args.length >= 1
+        break unless packet.args.length >= 0
         @emit( 'STANDBY' )
         return true
 
